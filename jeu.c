@@ -23,7 +23,11 @@ void jouer(SDL_Surface* ecran){
     int continuer=1;
     int i=0, j=0;
 
-    int carte[11][22];
+    // On alloue de la mémoire dynamiquement pour nos colonnes et rangées
+    int **carte=(int**)malloc(11*sizeof(int*));
+    for(i=0; i<11; i++){
+        carte[i] = (int*)malloc(21*sizeof(int));
+    }
 
     carte[0][0]=0;
     carte[0][1]=0;
@@ -359,7 +363,7 @@ void jouer(SDL_Surface* ecran){
 }
 
 // Fonction pour faire déplacer le joueur
-void deplacerJoueur(int carte[][22], SDL_Rect *pos, int direction){
+void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
 
     switch(direction){
         case HAUT:
