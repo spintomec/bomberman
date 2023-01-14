@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1673644335 source:/home/spinto/Desktop/BOMBER_MAN/jeu.c
+1673692349 source:/home/spinto/Desktop/BOMBER_MAN/jeu.c
 	<stdio.h>
 	<stdlib.h>
 	<SDL/SDL.h>
@@ -194,7 +194,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1673644343 /home/spinto/Desktop/BOMBER_MAN/jeu.h
+1673689117 /home/spinto/Desktop/BOMBER_MAN/jeu.h
 
 1673644347 /home/spinto/Desktop/BOMBER_MAN/constantes.h
 

@@ -365,7 +365,6 @@ void deplacerJoueur(int carte[][22], SDL_Rect *pos, int direction){
         case HAUT:
         if (carte[pos->y-1][pos->x]==MUR)
         break;
-
         pos->y--;
         break;
 
@@ -376,6 +375,13 @@ void deplacerJoueur(int carte[][22], SDL_Rect *pos, int direction){
         break;
 
         case GAUCHE:
+
+        if(positionJoueur.x == 2 && positionJoueur.y == 6) {
+            positionJoueur.x = 21;
+            break;
+
+        }
+
         if (carte[pos->y][pos->x-1]==MUR)
         break;
 
@@ -383,6 +389,12 @@ void deplacerJoueur(int carte[][22], SDL_Rect *pos, int direction){
         break;
 
         case DROITE:
+        
+         if(positionJoueur.x == 21 && positionJoueur.y == 6) {
+            positionJoueur.x = 2;
+            break;
+        }
+
         if (carte[pos->y][pos->x+1]==MUR)
         break;
         pos->x++;
