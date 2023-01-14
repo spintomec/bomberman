@@ -23,7 +23,7 @@ void jouer(SDL_Surface* ecran){
     int continuer=1;
     int i=0, j=0;
 
-    int carte[11][26];
+    int carte[11][22];
 
     carte[0][0]=0;
     carte[0][1]=0;
@@ -47,10 +47,6 @@ void jouer(SDL_Surface* ecran){
     carte[0][19]=0;
     carte[0][20]=0;
     carte[0][21]=0;
-    carte[0][22]=0;
-    carte[0][23]=0;
-    carte[0][24]=0;
-    carte[0][25]=0;
     carte[1][0]=0;
     carte[1][1]=0;
     carte[1][2]=0;
@@ -73,10 +69,6 @@ void jouer(SDL_Surface* ecran){
     carte[1][19]=0;
     carte[1][20]=0;
     carte[1][21]=0;
-    carte[1][22]=0;
-    carte[1][23]=0;
-    carte[1][24]=0;
-    carte[1][25]=0;
     carte[2][0]=0;
     carte[2][1]=0;
     carte[2][2]=1;
@@ -99,10 +91,6 @@ void jouer(SDL_Surface* ecran){
     carte[2][19]=1;
     carte[2][20]=1;
     carte[2][21]=1;
-    carte[2][22]=1;
-    carte[2][23]=1;
-    carte[2][24]=1;
-    carte[2][25]=1;
     carte[3][0]=0;
     carte[3][1]=0;
     carte[3][2]=1;
@@ -125,10 +113,6 @@ void jouer(SDL_Surface* ecran){
     carte[3][19]=0;
     carte[3][20]=0;
     carte[3][21]=0;
-    carte[3][22]=0;
-    carte[3][23]=0;
-    carte[3][24]=0;
-    carte[3][25]=1;
     carte[4][0]=0;
     carte[4][1]=0;
     carte[4][2]=1;
@@ -151,10 +135,6 @@ void jouer(SDL_Surface* ecran){
     carte[4][19]=1;
     carte[4][20]=0;
     carte[4][21]=0;
-    carte[4][22]=0;
-    carte[4][23]=1;
-    carte[4][24]=0;
-    carte[4][25]=1;
     carte[5][0]=0;
     carte[5][1]=0;
     carte[5][2]=1;
@@ -177,11 +157,6 @@ void jouer(SDL_Surface* ecran){
     carte[5][19]=1;
     carte[5][20]=1;
     carte[5][21]=0;
-    carte[5][22]=1;
-    carte[5][23]=1;
-    carte[5][24]=0;
-    carte[5][25]=1;
-    carte[5][25]=1;
     carte[6][0]=0;
     carte[6][1]=999;
     carte[6][2]=0;
@@ -204,10 +179,6 @@ void jouer(SDL_Surface* ecran){
     carte[6][19]=1;
     carte[6][20]=0;
     carte[6][21]=1;
-    carte[6][22]=0;
-    carte[6][23]=1;
-    carte[6][24]=0;
-    carte[6][25]=0;
     carte[7][0]=0;
     carte[7][1]=0;
     carte[7][2]=1;
@@ -230,10 +201,6 @@ void jouer(SDL_Surface* ecran){
     carte[7][19]=1;
     carte[7][20]=0;
     carte[7][21]=0;
-    carte[7][22]=0;
-    carte[7][23]=1;
-    carte[7][24]=0;
-    carte[7][25]=1;
     carte[8][0]=0;
     carte[8][1]=0;
     carte[8][2]=1;
@@ -256,10 +223,6 @@ void jouer(SDL_Surface* ecran){
     carte[8][19]=1;
     carte[8][20]=0;
     carte[8][21]=0;
-    carte[8][22]=0;
-    carte[8][23]=1;
-    carte[8][24]=0;
-    carte[8][25]=1;
     carte[9][0]=0;
     carte[9][1]=0;
     carte[9][2]=1;
@@ -283,9 +246,6 @@ void jouer(SDL_Surface* ecran){
     carte[9][20]=0;
     carte[9][21]=0;
     carte[9][22]=0;
-    carte[9][23]=0;
-    carte[9][24]=0;
-    carte[9][25]=1;
     carte[10][0]=0;
     carte[10][1]=0;
     carte[10][2]=1;
@@ -308,10 +268,6 @@ void jouer(SDL_Surface* ecran){
     carte[10][19]=1;
     carte[10][20]=1;
     carte[10][21]=1;
-    carte[10][22]=1;
-    carte[10][23]=1;
-    carte[10][24]=1;
-    carte[10][25]=1;
 
     mur=IMG_Load("mur.bmp");
     sacha[BAS]=IMG_Load("bas.bmp");
@@ -371,7 +327,7 @@ void jouer(SDL_Surface* ecran){
         SDL_FillRect(ecran,NULL,SDL_MapRGB(ecran->format,255,255,255));
 
         for ( i=0; i<11; i++){
-        for ( j=0; j<26; j++){
+        for ( j=0; j<22; j++){
 
             position.x = j*TAILLE_BLOC;
             position.y = i*TAILLE_BLOC;
@@ -403,7 +359,7 @@ void jouer(SDL_Surface* ecran){
 }
 
 // Fonction pour faire déplacer le joueur
-void deplacerJoueur(int carte[][26], SDL_Rect *pos, int direction){
+void deplacerJoueur(int carte[][22], SDL_Rect *pos, int direction){
 
     switch(direction){
         case HAUT:
