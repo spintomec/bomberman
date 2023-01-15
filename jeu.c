@@ -16,6 +16,7 @@ void jouer(SDL_Surface* ecran){
     SDL_Surface *sachaActuel=NULL;
 
     SDL_Surface *mur=NULL;
+    SDL_Surface *rocher=NULL;
 
 
     SDL_Event event;
@@ -278,6 +279,7 @@ void jouer(SDL_Surface* ecran){
     carte[10][21]=0;
 
     mur=IMG_Load("arbre.bmp");
+    rocher=IMG_Load("obstacle.bmp");
     sacha[BAS]=IMG_Load("bas.bmp");
     sacha[HAUT]=IMG_Load("haut.bmp");
     sacha[GAUCHE]=IMG_Load("gauche.bmp");
@@ -288,6 +290,8 @@ void jouer(SDL_Surface* ecran){
     positionJoueur.x=3;
     positionJoueur.y=3;
     carte[3][3]=SACHA;
+
+    placementAleatoireMur(carte);
 
     // On veut que le mouvement se répète
     SDL_EnableKeyRepeat(90,90);
@@ -344,6 +348,10 @@ void jouer(SDL_Surface* ecran){
                 case MUR:
                 SDL_BlitSurface(mur, NULL, ecran, &position);
                 break;
+
+                case ROCHER:
+                SDL_BlitSurface(rocher, NULL, ecran, &position);
+                break;
             }
 
         }
@@ -359,6 +367,7 @@ void jouer(SDL_Surface* ecran){
     }
     SDL_EnableKeyRepeat(0,0);
     SDL_FreeSurface(mur);
+    SDL_FreeSurface(rocher);
 
     // On arrête d'aficher les images pour les 4 positions
     for(i=0; i<4; i++){
@@ -373,33 +382,34 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
         case HAUT:
         if (carte[pos->y-1][pos->x]==MUR)
         break;
+        if (carte[pos->y-1][pos->x]==ROCHER)
+        break;
         pos->y--;
         break;
 
         case BAS:
         if (carte[pos->y+1][pos->x]==MUR)
         break;
+        if (carte[pos->y+1][pos->x]==ROCHER)
+        break;
         pos->y++;
         break;
 
         case GAUCHE:
-
         if(positionJoueur.x == 2 && positionJoueur.y == 6) {
             positionJoueur.x = 20;
             positionJoueur.y = 5;
             break;
-
         }
-
         if (carte[pos->y][pos->x-1]==MUR)
         break;
-
+        if (carte[pos->y][pos->x-1]==ROCHER)
+        break;
         pos->x--;
         break;
 
         case DROITE:
-
-         if(positionJoueur.x == 20 && positionJoueur.y == 5) {
+        if(positionJoueur.x == 20 && positionJoueur.y == 5) {
             positionJoueur.x = 2;
             positionJoueur.y = 6;
             break;
@@ -407,7 +417,46 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
 
         if (carte[pos->y][pos->x+1]==MUR)
         break;
+        if (carte[pos->y][pos->x+1]==ROCHER)
+        break;
         pos->x++;
         break;
+    }
+}
+
+void placementAleatoireMur(int **carte){
+    int a=0;
+    int b=0;
+
+    // On place les éléments dans le tableau centrale
+    for(a=1; a<11; a++) {
+
+    // On évite les erreurs liées à l'aléatoire
+    srand(time(NULL));
+
+    for(b=2; b<21; b++){
+
+
+        if (carte[a][b] == 0 && carte[a][b] != SACHA){
+            // Possibilité de rajouter de la difficulté
+            int v = rand()%1;
+            if(v==0){
+                carte[a][b]=ROCHER;
+            }
+        }
+    }
+    }
+    for(a=1; a<11; a++){
+    for(b=2; b<21; b++){
+
+        if (carte[a][b] == SACHA){
+                if(carte[a+1][b]==3){
+                    carte[a+1][b]=0;
+                }
+                if(carte[a][b+1]==3){
+                    carte[a][b+1]=0;
+                }
+        }
+    }
     }
 }
