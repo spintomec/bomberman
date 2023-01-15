@@ -396,6 +396,10 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
         break;
 
         case GAUCHE:
+
+        if(positionJoueur.x==2 && positionJoueur.y==6 && carte[5][20]==3){
+            break;
+        }
         if(positionJoueur.x == 2 && positionJoueur.y == 6) {
             positionJoueur.x = 20;
             positionJoueur.y = 5;
@@ -409,6 +413,9 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
         break;
 
         case DROITE:
+        if(positionJoueur.x==20 && positionJoueur.y==5 && carte[6][2]==3){
+           break;
+        }
         if(positionJoueur.x == 20 && positionJoueur.y == 5) {
             positionJoueur.x = 2;
             positionJoueur.y = 6;
@@ -439,7 +446,7 @@ void placementAleatoireMur(int **carte){
 
         if (carte[a][b] == 0 && carte[a][b] != SACHA){
             // Possibilité de rajouter de la difficulté
-            int v = rand()%1;
+            int v = rand()%2;
             if(v==0){
                 carte[a][b]=ROCHER;
             }

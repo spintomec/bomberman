@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1673821984 source:/home/spinto/Desktop/BOMBER_MAN/jeu.c
+1673823037 source:/home/spinto/Desktop/BOMBER_MAN/jeu.c
 	<stdio.h>
 	<stdlib.h>
 	<SDL/SDL.h>
