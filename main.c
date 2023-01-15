@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 
 int main(int argc, char *argv[])
 {
@@ -20,10 +21,17 @@ int main(int argc, char *argv[])
         ecran= SDL_SetVideoMode(760,465,32, SDL_HWSURFACE | SDL_DOUBLEBUF);
         SDL_WM_SetCaption("Poké BOMBER", NULL);
 
+        // On ajoute notre piste audio
+        Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
+        Mix_Music *musique;
+        musique=Mix_LoadMUS("pokemon.mp3");
+
     // On définit le menu et sa position
     menu = IMG_Load("menu.png");
     positionMenu.x=0;
     positionMenu.y=0;
+
+    Mix_PlayMusic(musique, -1);
 
     while(continuer){
         SDL_WaitEvent(&event);
@@ -53,6 +61,7 @@ int main(int argc, char *argv[])
 
     }
         // On arrête d'afficher l'image et on quite la SDL
+        Mix_CloseAudio();
         SDL_FreeSurface(menu);
         SDL_Quit();
         return EXIT_SUCCESS;
