@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_VIDEO);
         SDL_WM_SetIcon(IMG_Load("Sacha.bmp"), NULL);
         // On définit la taille de notre image et on empêche le clignotement
-        ecran= SDL_SetVideoMode(780,425,32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+        ecran= SDL_SetVideoMode(760,465,32, SDL_HWSURFACE | SDL_DOUBLEBUF);
         SDL_WM_SetCaption("Poké BOMBER", NULL);
 
     // On définit le menu et sa position
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
                 continuer=0;
                 break;
 
-                case SDLK_a:
+                case SDLK_RETURN:
                 jouer(ecran);
                 break;
 
