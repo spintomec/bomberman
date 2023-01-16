@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
                 break;
 
                 case SDLK_RETURN:
+                Mix_CloseAudio();
                 jouer(ecran);
                 break;
 
@@ -61,7 +62,6 @@ int main(int argc, char *argv[])
 
     }
         // On arrête d'afficher l'image et on quite la SDL
-        Mix_CloseAudio();
         SDL_FreeSurface(menu);
         SDL_Quit();
         return EXIT_SUCCESS;

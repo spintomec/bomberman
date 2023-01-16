@@ -5,6 +5,6 @@
 
 // On définit nos variables globales
 enum{HAUT,BAS,GAUCHE,DROITE};
-enum{VIDE,MUR,SACHA,ROCHER};
+enum{VIDE,MUR,SACHA,ROCHER,VILAIN};
 
 #endif // CONSTANTES_H_INCLUDED
