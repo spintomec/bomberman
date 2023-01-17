@@ -144,27 +144,27 @@ void jouer(SDL_Surface* ecran){
     carte[10][20]=1;
 
     // On charge les images de la map, les arbres et les obstacles
-    fond=IMG_Load("background5.bmp");
-    mur=IMG_Load("arbre.bmp");
-    rocher=IMG_Load("obstacle.bmp");
+    fond=IMG_Load("images/background5.bmp");
+    mur=IMG_Load("images/arbre.bmp");
+    rocher=IMG_Load("images/obstacle.bmp");
 
     // On charge les 4 images de positions des 2 joueurs
-    sacha[BAS]=IMG_Load("bas.bmp");
-    sacha[HAUT]=IMG_Load("haut.bmp");
-    sacha[GAUCHE]=IMG_Load("gauche.bmp");
-    sacha[DROITE]=IMG_Load("droite.bmp");
-    vilain[BAS]=IMG_Load("bas2.bmp");
-    vilain[HAUT]=IMG_Load("haut2.bmp");
-    vilain[GAUCHE]=IMG_Load("gauche2.bmp");
-    vilain[DROITE]=IMG_Load("droite2.bmp");
+    sacha[BAS]=IMG_Load("images/bas.bmp");
+    sacha[HAUT]=IMG_Load("images/haut.bmp");
+    sacha[GAUCHE]=IMG_Load("images/gauche.bmp");
+    sacha[DROITE]=IMG_Load("images/droite.bmp");
+    vilain[BAS]=IMG_Load("images/bas2.bmp");
+    vilain[HAUT]=IMG_Load("images/haut2.bmp");
+    vilain[GAUCHE]=IMG_Load("images/gauche2.bmp");
+    vilain[DROITE]=IMG_Load("images/droite2.bmp");
 
     // Image des bombes
-    bombe=IMG_Load("bombe1.bmp");
-    bombeCentre=IMG_Load("explosion_center.png");
-    bombeHaut=IMG_Load("explosion_verticale.png");
-    bombeBas=IMG_Load("explosion_verticale.png");
-    bombeGauche=IMG_Load("explosion_horizontale.png");
-    bombeDroite=IMG_Load("explosion_horizontale.png");
+    bombe=IMG_Load("images/bombe1.bmp");
+    bombeCentre=IMG_Load("images/explosion_center.png");
+    bombeHaut=IMG_Load("images/explosion_verticale.png");
+    bombeBas=IMG_Load("images/explosion_verticale.png");
+    bombeGauche=IMG_Load("images/explosion_horizontale.png");
+    bombeDroite=IMG_Load("images/explosion_horizontale.png");
 
     // On affiche sacha en position "BAS" au lancement de la partie
     sachaActuel=sacha[BAS];
@@ -178,7 +178,7 @@ void jouer(SDL_Surface* ecran){
     carte[3][5]=VILAIN;
 
 
-    // placementAleatoireMur(carte);
+    placementAleatoireMur(carte);
 
     // On veut que le mouvement se répète
     SDL_EnableKeyRepeat(90,90);
@@ -417,41 +417,41 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
     }
 }
 
-// void placementAleatoireMur(int **carte){
-//     int a=0;
-//     int b=0;
+void placementAleatoireMur(int **carte){
+    int a=0;
+    int b=0;
 
-//     // On place les éléments dans le tableau centrale
-//     for(a=2; a<11; a++) {
+    // On place les éléments dans le tableau centrale
+    for(a=2; a<11; a++) {
 
-//     // // On évite les erreurs liées à l'aléatoire
-//     // srand(time(NULL));
+    // // On évite les erreurs liées à l'aléatoire
+    // srand(time(NULL));
 
-//     for(b=2; b<21; b++){
+    for(b=2; b<21; b++){
 
-//         if (carte[a][b] == 0 && carte[a][b] != SACHA){
-//             // Possibilité de rajouter de la difficulté
-//             int v = rand()%2;
-//             if(v==0){
-//                 carte[a][b]=ROCHER;
-//             }
-//         }
-//     }
-//     }
-//     for(a=2; a<11; a++){
-//     for(b=2; b<21; b++){
+        if (carte[a][b] == 0 && carte[a][b] != SACHA){
+            // Possibilité de rajouter de la difficulté
+            int v = rand()%2;
+            if(v==0){
+                carte[a][b]=ROCHER;
+            }
+        }
+    }
+    }
+    for(a=2; a<11; a++){
+    for(b=2; b<21; b++){
 
-//         if (carte[a][b] == SACHA){
-//                 if(carte[a+1][b]==3){
-//                     carte[a+1][b]=0;
-//                 }
-//                 if(carte[a][b+1]==3){
-//                     carte[a][b+1]=0;
-//                 }
-//         }
-//     }
-//     }
-// }
+        if (carte[a][b] == SACHA){
+                if(carte[a+1][b]==3){
+                    carte[a+1][b]=0;
+                }
+                if(carte[a][b+1]==3){
+                    carte[a][b+1]=0;
+                }
+        }
+    }
+    }
+}
 
 void creationBombe(int **carte, SDL_Surface* ecran){
 

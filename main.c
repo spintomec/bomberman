@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     int continuer=3;
 
     SDL_Init(SDL_INIT_VIDEO);
-        SDL_WM_SetIcon(IMG_Load("Sacha.bmp"), NULL);
+        // SDL_WM_SetIcon(IMG_Load("images/sacha.bmp"), NULL);
         // On définit la taille de notre image et on empêche le clignotement
         ecran= SDL_SetVideoMode(760,465,32, SDL_HWSURFACE | SDL_DOUBLEBUF);
         SDL_WM_SetCaption("Poké BOMBER", NULL);
@@ -29,10 +29,10 @@ int main(int argc, char *argv[])
         // On ajoute notre piste audio
         Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
         Mix_Music *musique;
-        musique=Mix_LoadMUS("pokemon.mp3");
+        musique=Mix_LoadMUS("son/pokemon.mp3");
 
     // On définit le menu et sa position
-    menu = IMG_Load("menu.png");
+    menu = IMG_Load("images/menu.png");
     positionMenu.x=0;
     positionMenu.y=0;
 
