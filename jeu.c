@@ -2,10 +2,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include <SDL_image.h>
 #include "jeu.h"
 #include "constantes.h"
-#include <SDL_mixer.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+
+// void UpdateClavier(Touches* etat_clavier){
+void UpdateClavier(Touches* etat_clavier){
+   SDL_Event event;
+   // Récupère le keycode de la touche enfoncée
+   while(SDL_PollEvent(&event)){
+       switch(event.type){
+           case SDL_KEYDOWN:
+           etat_clavier->key[event.key.keysym.sym]=1;
+           break;
+
+           case SDL_KEYUP:
+           etat_clavier->key[event.key.keysym.sym]=0;
+           break;
+           
+           default:
+           break;
+       }
+
+   }
+}
 
 
 // Position de objets et du joueur
@@ -17,6 +38,9 @@ void jouer(SDL_Surface* ecran){
     // Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
     // Mix_Music *musique2;
     // musique2=Mix_LoadMUS("copy.mp3");
+
+    Touches etat_clavier;
+    memset(&etat_clavier, 0, sizeof(etat_clavier));
 
 
     // On crée un tableau pour les 4 position des joueurs
@@ -115,7 +139,7 @@ void jouer(SDL_Surface* ecran){
     carte[10][19]=1;
     carte[10][20]=1;
 
-    fond=IMG_Load("background.bmp");
+    fond=IMG_Load("background5.bmp");
     mur=IMG_Load("arbre.bmp");
     rocher=IMG_Load("obstacle.bmp");
     sacha[BAS]=IMG_Load("bas.bmp");
@@ -135,8 +159,8 @@ void jouer(SDL_Surface* ecran){
     carte[3][3]=SACHA;
 
     vilainActuel=vilain[BAS];
-    positionJoueurVilain.x=5;
-    positionJoueurVilain.y=3;
+    positionJoueurVilain.x=17;
+    positionJoueurVilain.y=8;
     carte[3][5]=VILAIN;
 
 
@@ -200,7 +224,13 @@ void jouer(SDL_Surface* ecran){
                 deplacerJoueur(carte, &positionJoueurVilain, DROITE);
                 break;
 
+                default:
+                break;
+
             }
+            break;
+
+            default:
             break;
         }
 
@@ -276,13 +306,24 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
         break;
 
         case GAUCHE:
-
+        // Joueur 1 colision roché
         if(positionJoueur.x==2 && positionJoueur.y==6 && carte[5][20]==3){
             break;
         }
+        // Joueur 2 colision roché
+        if(positionJoueurVilain.x==2 && positionJoueurVilain.y==6 && carte[5][20]==3){
+            break;
+        }
+        // Joueur 1 tp gauche
         if(positionJoueur.x == 2 && positionJoueur.y == 6) {
             positionJoueur.x = 20;
             positionJoueur.y = 5;
+            break;
+        }
+        // Joueur 2 tp gauche
+        if(positionJoueurVilain.x == 2 && positionJoueurVilain.y == 6) {
+            positionJoueurVilain.x = 20;
+            positionJoueurVilain.y = 5;
             break;
         }
         if (carte[pos->y][pos->x-1]==MUR)
@@ -293,12 +334,24 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
         break;
 
         case DROITE:
+        // Joueur 1 colision roché
         if(positionJoueur.x==20 && positionJoueur.y==5 && carte[6][2]==3){
            break;
         }
+        // Joueur 2 colision roché
+        if(positionJoueurVilain.x==20 && positionJoueurVilain.y==5 && carte[6][2]==3){
+           break;
+        }
+        // Joueur 1 tp droite
         if(positionJoueur.x == 20 && positionJoueur.y == 5) {
             positionJoueur.x = 2;
             positionJoueur.y = 6;
+            break;
+        }
+        // Joueur 2 tp droite
+        if(positionJoueurVilain.x == 20 && positionJoueurVilain.y == 5) {
+            positionJoueurVilain.x = 2;
+            positionJoueurVilain.y = 6;
             break;
         }
 
@@ -318,11 +371,10 @@ void placementAleatoireMur(int **carte){
     // On place les éléments dans le tableau centrale
     for(a=1; a<11; a++) {
 
-    // On évite les erreurs liées à l'aléatoire
-    srand(time(NULL));
+    // // On évite les erreurs liées à l'aléatoire
+    // srand(time(NULL));
 
     for(b=2; b<21; b++){
-
 
         if (carte[a][b] == 0 && carte[a][b] != SACHA){
             // Possibilité de rajouter de la difficulté
@@ -333,8 +385,8 @@ void placementAleatoireMur(int **carte){
         }
     }
     }
-    for(a=1; a<11; a++){
-    for(b=2; b<21; b++){
+    for(a=2; a<11; a++){
+    for(b=3; b<21; b++){
 
         if (carte[a][b] == SACHA){
                 if(carte[a+1][b]==3){

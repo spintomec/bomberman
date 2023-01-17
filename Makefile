@@ -10,7 +10,7 @@ OBJ		=	$(SRC:.c=.o)
 CFLAGS	+=	-I./include
 CFLAGS	+=	-Wall -Werror -Wextra
 
-LDFLAGS += -lSDL -lSDL_ttf -lSDL_imag
+LDFLAGS += -lSDL -lSDL_ttf -lSDL_image -lSDLmain
 
 RM		=	rm -f
 

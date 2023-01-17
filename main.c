@@ -2,10 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
+#include "jeu.h"
+#include "constantes.h"
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+//#include <SDL_image.h>
+//#include <SDL_mixer.h>
 
-int main(int argc, char *argv[])
+int main()
 {
     SDL_Surface *ecran =NULL;
     SDL_Surface *menu =NULL;
@@ -49,11 +53,16 @@ int main(int argc, char *argv[])
                 break;
 
                 case SDLK_RETURN:
-                Mix_CloseAudio();
                 jouer(ecran);
                 break;
 
+                default:
+                break;
+
             }
+            break;
+
+            default:
             break;
         }
         // On rafraichit l'ecran
@@ -62,6 +71,7 @@ int main(int argc, char *argv[])
 
     }
         // On arrête d'afficher l'image et on quite la SDL
+        Mix_CloseAudio();
         SDL_FreeSurface(menu);
         SDL_Quit();
         return EXIT_SUCCESS;
