@@ -18,7 +18,15 @@ typedef struct{
 listearg liste;
 
 
-// Position de objets et du joueur
+
+// Position de objets et des joueurs
+SDL_Rect positionBombe;
+SDL_Rect positionBombeHaut;
+SDL_Rect positionBombeBas;
+SDL_Rect positionBombeGauche;
+SDL_Rect positionBombeDroite;
+SDL_Rect positionBombeCentre;
+
 SDL_Rect position, positionJoueur;
 SDL_Rect positionVilain, positionJoueurVilain;
 
@@ -29,7 +37,7 @@ void jouer(SDL_Surface* ecran){
     // musique2=Mix_LoadMUS("copy.mp3");
 
 
-    // On crée un tableau pour les 4 position des joueurs
+    // On crée une surface pour les 4 position des joueurs
     SDL_Surface *sacha[4]={NULL};
     SDL_Surface *sachaActuel=NULL;
     SDL_Surface *vilain[4]={NULL};
@@ -41,6 +49,14 @@ void jouer(SDL_Surface* ecran){
     SDL_Surface *fond=NULL;
 
     SDL_Event event;
+
+    // On crée une surface pour les 6 états de la bombe
+    SDL_Surface *bombe=NULL;
+    SDL_Surface *bombeHaut=NULL;
+    SDL_Surface *bombeBas=NULL;
+    SDL_Surface *bombeGauche=NULL;
+    SDL_Surface *bombeDroite=NULL;
+    SDL_Surface *bombeCentre=NULL;
 
     int continuer=1;
     int i=0, j=0;
@@ -72,6 +88,7 @@ void jouer(SDL_Surface* ecran){
     carte[1][17]=1;
     carte[1][18]=1;
     carte[1][19]=1;
+    carte[1][20]=1;
     carte[1][21]=0;
     carte[2][2]=1;
     carte[2][20]=1;
@@ -89,7 +106,7 @@ void jouer(SDL_Surface* ecran){
     carte[5][9]=1;
     carte[5][10]=1;
     carte[5][11]=1;
-    carte[6][1]=999;
+    carte[6][1]=0;
     carte[6][11]=1;
     carte[6][12]=1;
     carte[6][13]=1;
@@ -101,6 +118,7 @@ void jouer(SDL_Surface* ecran){
     carte[7][11]=1;
     carte[7][20]=1;
     carte[8][2]=1;
+    carte[8][6]=3;
     carte[8][11]=1;
     carte[8][20]=1;
     carte[9][2]=1;
@@ -125,9 +143,12 @@ void jouer(SDL_Surface* ecran){
     carte[10][19]=1;
     carte[10][20]=1;
 
+    // On charge les images de la map, les arbres et les obstacles
     fond=IMG_Load("background5.bmp");
     mur=IMG_Load("arbre.bmp");
     rocher=IMG_Load("obstacle.bmp");
+
+    // On charge les 4 images de positions des 2 joueurs
     sacha[BAS]=IMG_Load("bas.bmp");
     sacha[HAUT]=IMG_Load("haut.bmp");
     sacha[GAUCHE]=IMG_Load("gauche.bmp");
@@ -137,6 +158,13 @@ void jouer(SDL_Surface* ecran){
     vilain[GAUCHE]=IMG_Load("gauche2.bmp");
     vilain[DROITE]=IMG_Load("droite2.bmp");
 
+    // Image des bombes
+    bombe=IMG_Load("bombe1.bmp");
+    bombeCentre=IMG_Load("explosion_center.png");
+    bombeHaut=IMG_Load("explosion_verticale.png");
+    bombeBas=IMG_Load("explosion_verticale.png");
+    bombeGauche=IMG_Load("explosion_horizontale.png");
+    bombeDroite=IMG_Load("explosion_horizontale.png");
 
     // On affiche sacha en position "BAS" au lancement de la partie
     sachaActuel=sacha[BAS];
@@ -150,7 +178,7 @@ void jouer(SDL_Surface* ecran){
     carte[3][5]=VILAIN;
 
 
-    placementAleatoireMur(carte);
+    // placementAleatoireMur(carte);
 
     // On veut que le mouvement se répète
     SDL_EnableKeyRepeat(90,90);
@@ -248,6 +276,34 @@ void jouer(SDL_Surface* ecran){
                 case ROCHER:
                 SDL_BlitSurface(rocher, NULL, ecran, &position);
                 break;
+
+                case BOMBE:
+                SDL_BlitSurface(bombe, NULL, ecran, &position);
+                break;
+
+                case BOMBECENTRE:
+                SDL_BlitSurface(bombeCentre, NULL, ecran, &position);
+
+                break;
+
+                case BOMBEHAUT:
+                SDL_BlitSurface(bombeHaut, NULL, ecran, &position);
+                break;
+
+                case BOMBEBAS:
+                SDL_BlitSurface(bombeBas, NULL, ecran, &position);
+
+                break;
+
+                case BOMBEGAUCHE:
+                SDL_BlitSurface(bombeGauche, NULL, ecran, &position);
+
+                break;
+                
+                case BOMBEDROITE:
+                SDL_BlitSurface(bombeDroite, NULL, ecran, &position);
+
+                break;
             }
 
         }
@@ -274,6 +330,12 @@ void jouer(SDL_Surface* ecran){
         SDL_FreeSurface(sacha[i]);
         SDL_FreeSurface(vilain[i]);
     }
+        SDL_FreeSurface(bombe);
+        SDL_FreeSurface(bombeCentre);
+        SDL_FreeSurface(bombeHaut);
+        SDL_FreeSurface(bombeBas);
+        SDL_FreeSurface(bombeGauche);
+        SDL_FreeSurface(bombeDroite);
 }
 
 // Fonction pour faire déplacer le joueur
@@ -355,41 +417,41 @@ void deplacerJoueur(int **carte, SDL_Rect *pos, int direction){
     }
 }
 
-void placementAleatoireMur(int **carte){
-    int a=0;
-    int b=0;
+// void placementAleatoireMur(int **carte){
+//     int a=0;
+//     int b=0;
 
-    // On place les éléments dans le tableau centrale
-    for(a=1; a<11; a++) {
+//     // On place les éléments dans le tableau centrale
+//     for(a=2; a<11; a++) {
 
-    // // On évite les erreurs liées à l'aléatoire
-    srand(time(NULL));
+//     // // On évite les erreurs liées à l'aléatoire
+//     // srand(time(NULL));
 
-    for(b=2; b<21; b++){
+//     for(b=2; b<21; b++){
 
-        if (carte[a][b] == 0 && carte[a][b] != SACHA){
-            // Possibilité de rajouter de la difficulté
-            int v = rand()%2;
-            if(v==0){
-                carte[a][b]=ROCHER;
-            }
-        }
-    }
-    }
-    for(a=2; a<11; a++){
-    for(b=3; b<21; b++){
+//         if (carte[a][b] == 0 && carte[a][b] != SACHA){
+//             // Possibilité de rajouter de la difficulté
+//             int v = rand()%2;
+//             if(v==0){
+//                 carte[a][b]=ROCHER;
+//             }
+//         }
+//     }
+//     }
+//     for(a=2; a<11; a++){
+//     for(b=2; b<21; b++){
 
-        if (carte[a][b] == SACHA){
-                if(carte[a+1][b]==3){
-                    carte[a+1][b]=0;
-                }
-                if(carte[a][b+1]==3){
-                    carte[a][b+1]=0;
-                }
-        }
-    }
-    }
-}
+//         if (carte[a][b] == SACHA){
+//                 if(carte[a+1][b]==3){
+//                     carte[a+1][b]=0;
+//                 }
+//                 if(carte[a][b+1]==3){
+//                     carte[a][b+1]=0;
+//                 }
+//         }
+//     }
+//     }
+// }
 
 void creationBombe(int **carte, SDL_Surface* ecran){
 
@@ -407,9 +469,114 @@ void *gestion_bombe(void*arg){
     listearg *args=(listearg*)arg;
     int **carte1 = args->carte1;
 
-    {
-        sleep(5);
+    // La bombe est créee au niveau du joueur dans la carte1 (thread)
+    carte1[positionJoueur.y][positionJoueur.x]=BOMBE;
+
+    sleep(1);
+
+    int a ,b=0;
+
+    for(a=2; a<11; a++){
+    for(b=2; b<21; b++){
+
+    // EXPLOSIIIOOON
+        if(carte1[a][b]==BOMBE){
+
+            carte1[a][b]=BOMBECENTRE;
+            // 1 case en dessous de l'explosion 
+            if(carte1[a+1][b]!=MUR){
+                carte1[a+1][b]=BOMBEBAS;
+            }
+
+            if(carte1[a+1][b] ==carte1[positionJoueur.y][positionJoueur.x]){
+                carte1[a+1][b]=BOMBEBAS;
+            }
+
+            if(carte1[a+1][b]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
+                carte1[a+1][b]=BOMBEBAS;
+            }
+
+            if(carte1[a+1][b]==ROCHER){
+                carte1[a+1][b]=BOMBEBAS;
+            }
+         // 1 case au dessus de l'explosion 
+            if(carte1[a-1][b]!=MUR){
+                carte1[a-1][b]=BOMBEHAUT;
+            }
+
+            if(carte1[a-1][b]==carte1[positionJoueur.y][positionJoueur.x]){
+                carte1[a-1][b]=BOMBEHAUT;
+            }
+
+            if(carte1[a-1][b]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
+                carte1[a-1][b]=BOMBEHAUT;
+            }
+
+            if(carte1[a-1][b]==ROCHER){
+                carte1[a-1][b]=BOMBEHAUT;
+            }
+
+         // 1 case à droite de l'explosion 
+            if(carte1[a][b+1]!=MUR){
+                carte1[a][b+1]=BOMBEDROITE;
+            }
+
+            if(carte1[a][b+1]==carte1[positionJoueur.y][positionJoueur.x]){
+                carte1[a][b+1]=BOMBEDROITE;
+            }
+
+            if(carte1[a][b+1]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
+                carte1[a][b+1]=BOMBEDROITE;
+            }
+
+            if(carte1[a][b+1]==ROCHER){
+                carte1[a][b+1]=BOMBEDROITE;
+            }
+
+            // 1 case à gauche de l'explosion 
+            if(carte1[a][b-1]!=MUR){
+                carte1[a][b-1]=BOMBEGAUCHE;
+            }
+
+            if(carte1[a][b-1]==carte1[positionJoueur.y][positionJoueur.x]){
+                carte1[a][b-1]=BOMBEGAUCHE;
+            }
+
+            if(carte1[a][b-1]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
+                carte1[a][b-1]=BOMBEGAUCHE;
+            }
+
+            if(carte1[a][b-1]==ROCHER){
+                carte1[a][b-1]=BOMBEGAUCHE;
+            }
+        }
     }
+    }
+
+    // On fait apparaitre l'explosion
+    usleep(200000);
+
+    // On fait disparaitre l'explosion
+    for(a=2; a<11; a++){
+    for(b=2; b<21; b++){
+        if(carte1[a][b]==BOMBECENTRE){
+            carte1[a][b]=VIDE;
+        }
+        if(carte1[a][b]==BOMBEHAUT){
+            carte1[a][b]=VIDE;
+        }
+        if(carte1[a][b]==BOMBEBAS){
+            carte1[a][b]=VIDE;
+        }
+        if(carte1[a][b]==BOMBEGAUCHE){
+            carte1[a][b]=VIDE;
+        }
+        if(carte1[a][b]==BOMBEDROITE){
+            carte1[a][b]=VIDE;
+        }
+    }
+    }
+
     // On sort du thread
     pthread_exit(NULL);
 }
