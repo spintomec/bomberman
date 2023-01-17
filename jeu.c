@@ -21,6 +21,7 @@ listearg liste;
 
 // Position de objets et des joueurs
 SDL_Rect positionBombe;
+SDL_Rect positionBombe2;
 SDL_Rect positionBombeHaut;
 SDL_Rect positionBombeBas;
 SDL_Rect positionBombeGauche;
@@ -50,8 +51,9 @@ void jouer(SDL_Surface* ecran){
 
     SDL_Event event;
 
-    // On crée une surface pour les 6 états de la bombe
+    // On crée une surface pour les 7 états de la bombe
     SDL_Surface *bombe=NULL;
+    SDL_Surface *bombe2=NULL;
     SDL_Surface *bombeHaut=NULL;
     SDL_Surface *bombeBas=NULL;
     SDL_Surface *bombeGauche=NULL;
@@ -159,7 +161,8 @@ void jouer(SDL_Surface* ecran){
     vilain[DROITE]=IMG_Load("images/droite2.bmp");
 
     // Image des bombes
-    bombe=IMG_Load("images/bombe1.bmp");
+    bombe=IMG_Load("images/bombe1.png");
+    bombe2=IMG_Load("images/bombe2.png");
     bombeCentre=IMG_Load("images/explosion_center.png");
     bombeHaut=IMG_Load("images/explosion_verticale.png");
     bombeBas=IMG_Load("images/explosion_verticale.png");
@@ -218,7 +221,7 @@ void jouer(SDL_Surface* ecran){
                 deplacerJoueur(carte, &positionJoueur, DROITE);
                 break;
 
-                case SDLK_x:
+                case SDLK_RSHIFT:
                 creationBombe(carte,ecran);
                 break;
 
@@ -281,6 +284,10 @@ void jouer(SDL_Surface* ecran){
                 SDL_BlitSurface(bombe, NULL, ecran, &position);
                 break;
 
+                case BOMBE2:
+                SDL_BlitSurface(bombe2, NULL, ecran, &position);
+                break;
+
                 case BOMBECENTRE:
                 SDL_BlitSurface(bombeCentre, NULL, ecran, &position);
 
@@ -331,6 +338,7 @@ void jouer(SDL_Surface* ecran){
         SDL_FreeSurface(vilain[i]);
     }
         SDL_FreeSurface(bombe);
+        SDL_FreeSurface(bombe2);
         SDL_FreeSurface(bombeCentre);
         SDL_FreeSurface(bombeHaut);
         SDL_FreeSurface(bombeBas);
@@ -431,7 +439,7 @@ void placementAleatoireMur(int **carte){
 
         if (carte[a][b] == 0 && carte[a][b] != SACHA){
             // Possibilité de rajouter de la difficulté
-            int v = rand()%2;
+            int v = rand()%1;
             if(v==0){
                 carte[a][b]=ROCHER;
             }
@@ -442,10 +450,10 @@ void placementAleatoireMur(int **carte){
     for(b=2; b<21; b++){
 
         if (carte[a][b] == SACHA){
-                if(carte[a+1][b]==3){
+                if(carte[a+1][b]=3){
                     carte[a+1][b]=0;
                 }
-                if(carte[a][b+1]==3){
+                if(carte[a][b+1]=3){
                     carte[a][b+1]=0;
                 }
         }
@@ -469,12 +477,47 @@ void *gestion_bombe(void*arg){
     listearg *args=(listearg*)arg;
     int **carte1 = args->carte1;
 
+    int a ,b=0;
+
+    for(a=2; a<11; a++){
+    for(b=2; b<21; b++){
+
+        if(carte1[a][b]==BOMBE){
+            // On empêche qu'il y ait plusieurs bombes sur la map
+            pthread_exit(NULL);
+        }
+    }}
+
     // La bombe est créee au niveau du joueur dans la carte1 (thread)
     carte1[positionJoueur.y][positionJoueur.x]=BOMBE;
 
-    sleep(1);
 
-    int a ,b=0;
+
+    
+
+    for(a=2; a<11; a++){
+    for(b=2; b<21; b++){
+        if(carte1[a][b]==BOMBE){
+            carte1[a][b]=BOMBE2;
+            usleep(200000);
+            carte1[a][b]=BOMBE;
+            usleep(200000);
+            carte1[a][b]=BOMBE2;
+            usleep(200000);
+            carte1[a][b]=BOMBE;
+            usleep(200000);
+            
+        }
+          Mix_AllocateChannels(32);
+            Mix_Chunk *bruitbombe;
+            // on charge le son au format WAV (marche pour les mp3)
+            bruitbombe=Mix_LoadWAV("son/bruitbombe.mp3");
+            Mix_PlayChannel(2,bruitbombe,0);
+    }
+    }
+     // On alloue plusieurs channels pour superposer les sons
+          
+
 
     for(a=2; a<11; a++){
     for(b=2; b<21; b++){
@@ -555,6 +598,10 @@ void *gestion_bombe(void*arg){
 
     // On fait apparaitre l'explosion
     usleep(200000);
+
+   
+
+
 
     // On fait disparaitre l'explosion
     for(a=2; a<11; a++){
