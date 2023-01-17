@@ -1,12 +1,13 @@
 # depslib dependency file v1.0
-1673947131 source:/home/spinto/Desktop/BOMBER_MAN/jeu.c
+1673953265 source:/home/spinto/Desktop/BOMBER_MAN/jeu.c
 	<stdio.h>
 	<stdlib.h>
 	<SDL/SDL.h>
-	"jeu.h"
-	"constantes.h"
+	<pthread.h>
 	<SDL/SDL_image.h>
 	<SDL/SDL_mixer.h>
+	"jeu.h"
+	"constantes.h"
 
 1567083065 /usr/include/SDL/SDL_image.h
 	"SDL.h"
@@ -195,11 +196,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1673820280 /home/spinto/Desktop/BOMBER_MAN/jeu.h
+1673952909 /home/spinto/Desktop/BOMBER_MAN/jeu.h
 
 1673827618 /home/spinto/Desktop/BOMBER_MAN/constantes.h
 
-1673893952 source:/home/spinto/Desktop/BOMBER_MAN/main.c
+1673949650 source:/home/spinto/Desktop/BOMBER_MAN/main.c
 	<stdio.h>
 	<stdlib.h>
 	<SDL/SDL.h>
@@ -207,6 +208,9 @@
 	"constantes.h"
 	<SDL/SDL_image.h>
 	<SDL/SDL_mixer.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<SDL/SDL.h>
 
 1540311688 /usr/include/SDL/SDL_mixer.h
 	"SDL_types.h"

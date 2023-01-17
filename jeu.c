@@ -2,31 +2,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include "jeu.h"
-#include "constantes.h"
+#include <pthread.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
+#include "jeu.h"
+#include "constantes.h"
+//#include <SDL_mixer.h>
+//#include <SDL_image.h>
 
-// void UpdateClavier(Touches* etat_clavier){
-void UpdateClavier(Touches* etat_clavier){
-   SDL_Event event;
-   // Récupère le keycode de la touche enfoncée
-   while(SDL_PollEvent(&event)){
-       switch(event.type){
-           case SDL_KEYDOWN:
-           etat_clavier->key[event.key.keysym.sym]=1;
-           break;
+typedef struct{
+    int **carte1;
+    SDL_Surface* ecran1;
+}listearg;
 
-           case SDL_KEYUP:
-           etat_clavier->key[event.key.keysym.sym]=0;
-           break;
-           
-           default:
-           break;
-       }
-
-   }
-}
+listearg liste;
 
 
 // Position de objets et du joueur
@@ -38,9 +27,6 @@ void jouer(SDL_Surface* ecran){
     // Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
     // Mix_Music *musique2;
     // musique2=Mix_LoadMUS("copy.mp3");
-
-    Touches etat_clavier;
-    memset(&etat_clavier, 0, sizeof(etat_clavier));
 
 
     // On crée un tableau pour les 4 position des joueurs
@@ -203,6 +189,11 @@ void jouer(SDL_Surface* ecran){
                 sachaActuel=sacha[DROITE];
                 deplacerJoueur(carte, &positionJoueur, DROITE);
                 break;
+
+                case SDLK_x:
+                creationBombe(carte,ecran);
+                break;
+
              // Déplacements Vilain
                 case SDLK_UP:
                 vilainActuel=vilain[HAUT];
@@ -372,7 +363,7 @@ void placementAleatoireMur(int **carte){
     for(a=1; a<11; a++) {
 
     // // On évite les erreurs liées à l'aléatoire
-    // srand(time(NULL));
+    srand(time(NULL));
 
     for(b=2; b<21; b++){
 
@@ -398,4 +389,27 @@ void placementAleatoireMur(int **carte){
         }
     }
     }
+}
+
+void creationBombe(int **carte, SDL_Surface* ecran){
+
+    // On crée une carte et un écran en parallèle
+    pthread_t thread1;
+    liste.carte1=carte;
+    liste.ecran1=ecran;
+
+    // On précise le thread qu'on utilise et la fonction avec ses arguments, en parallèle
+    pthread_create(&thread1,NULL, gestion_bombe, (void*)&liste);
+}
+
+void *gestion_bombe(void*arg){
+
+    listearg *args=(listearg*)arg;
+    int **carte1 = args->carte1;
+
+    {
+        sleep(5);
+    }
+    // On sort du thread
+    pthread_exit(NULL);
 }

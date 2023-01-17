@@ -6,10 +6,11 @@
 #include "constantes.h"
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
-//#include <SDL_image.h>
-//#include <SDL_mixer.h>
+#include <SDL_image.h>
+#include <SDL_mixer.h>
+#include <SDL/SDL.h>
 
-int main()
+int main(int argc, char *argv[])
 {
     SDL_Surface *ecran =NULL;
     SDL_Surface *menu =NULL;
