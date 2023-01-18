@@ -10,14 +10,34 @@
 //#include <SDL_mixer.h>
 //#include <SDL_image.h>
 
+
+void updateClavier(Touches* etat_clavier){
+    SDL_Event event;
+    // On renvoie le KEY code de la touche soit 1 soit 0
+    while(SDL_PollEvent(&event)){
+
+        switch(event.type){
+            
+            case SDL_KEYDOWN:
+            etat_clavier->key[event.key.keysym.sym]=1;
+            break;
+
+            case SDL_KEYUP:
+            etat_clavier->key[event.key.keysym.sym]=0;
+            break;
+
+            default:
+            break;
+        }
+    }
+}
+
 typedef struct{
     int **carte1;
     SDL_Surface* ecran1;
 }listearg;
 
 listearg liste;
-
-
 
 // Position de objets et des joueurs
 SDL_Rect positionBombe;
@@ -28,10 +48,19 @@ SDL_Rect positionBombeGauche;
 SDL_Rect positionBombeDroite;
 SDL_Rect positionBombeCentre;
 
+SDL_Rect positionWin;
+SDL_Rect positionLoose;
+
 SDL_Rect position, positionJoueur;
 SDL_Rect positionVilain, positionJoueurVilain;
 
+int continuer;
+
 void jouer(SDL_Surface* ecran){
+
+    Touches etat_clavier;
+    // 0 par défaut quand on entre dans la fonction jouer
+    memset(&etat_clavier,0,sizeof(etat_clavier));
 
     // Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
     // Mix_Music *musique2;
@@ -39,6 +68,10 @@ void jouer(SDL_Surface* ecran){
 
 
     // On crée une surface pour les 4 position des joueurs
+    
+    SDL_Surface *sachaWin=NULL;
+    SDL_Surface *sachaLoose=NULL;
+    
     SDL_Surface *sacha[4]={NULL};
     SDL_Surface *sachaActuel=NULL;
     SDL_Surface *vilain[4]={NULL};
@@ -60,7 +93,9 @@ void jouer(SDL_Surface* ecran){
     SDL_Surface *bombeDroite=NULL;
     SDL_Surface *bombeCentre=NULL;
 
-    int continuer=1;
+    continuer=1;
+    // int continuer=1;
+
     int i=0, j=0;
 
     // On alloue de la mémoire dynamiquement pour chaque bloc de nos colonnes et rangées
@@ -150,6 +185,9 @@ void jouer(SDL_Surface* ecran){
     mur=IMG_Load("images/arbre.bmp");
     rocher=IMG_Load("images/obstacle.bmp");
 
+    sachaWin=IMG_Load("images/win2.png");
+    sachaLoose=IMG_Load("images/lose2.png");
+
     // On charge les 4 images de positions des 2 joueurs
     sacha[BAS]=IMG_Load("images/bas.bmp");
     sacha[HAUT]=IMG_Load("images/haut.bmp");
@@ -183,77 +221,115 @@ void jouer(SDL_Surface* ecran){
 
     placementAleatoireMur(carte);
 
-    // On veut que le mouvement se répète
-    SDL_EnableKeyRepeat(90,90);
 
-    while(continuer) {
-        SDL_WaitEvent(&event);
-        switch(event.type)
+    while(continuer==1) {
         {
-            case SDL_QUIT:
-            continuer=0;
-            break;
+            updateClavier(&etat_clavier);
 
-            case SDL_KEYDOWN:
-            switch(event.key.keysym.sym) {
-
-                case SDLK_ESCAPE:
+            if(etat_clavier.key[SDL_QUIT]) {
                 continuer=0;
-                break;
-            // Déplacements sacha
-                case SDLK_z:
+            }
+            if(etat_clavier.key[SDLK_ESCAPE]) {
+                continuer=0;
+            }
+            if(etat_clavier.key[SDLK_z]) {
                 sachaActuel=sacha[HAUT];
                 deplacerJoueur(carte, &positionJoueur, HAUT);
-                break;
-
-                case SDLK_s:
-                sachaActuel=sacha[BAS];
-                deplacerJoueur(carte, &positionJoueur, BAS);
-                break;
-
-                case SDLK_q:
+            }
+            if(etat_clavier.key[SDLK_q]) {
                 sachaActuel=sacha[GAUCHE];
                 deplacerJoueur(carte, &positionJoueur, GAUCHE);
-                break;
-
-                case SDLK_d:
+            }
+            if(etat_clavier.key[SDLK_s]) {
+                sachaActuel=sacha[BAS];
+                deplacerJoueur(carte, &positionJoueur, BAS);
+            }
+            if(etat_clavier.key[SDLK_d]) {
                 sachaActuel=sacha[DROITE];
                 deplacerJoueur(carte, &positionJoueur, DROITE);
-                break;
-
-                case SDLK_RSHIFT:
+            }
+            if(etat_clavier.key[SDLK_x]) {
                 creationBombe(carte,ecran);
-                break;
+            }
 
-             // Déplacements Vilain
-                case SDLK_UP:
+             if(etat_clavier.key[SDLK_UP]) {
                 vilainActuel=vilain[HAUT];
                 deplacerJoueur(carte, &positionJoueurVilain, HAUT);
-                break;
-
-                case SDLK_DOWN:
-                vilainActuel=vilain[BAS];
-                deplacerJoueur(carte, &positionJoueurVilain, BAS);
-                break;
-
-                case SDLK_LEFT:
-                vilainActuel=vilain[GAUCHE];
-                deplacerJoueur(carte, &positionJoueurVilain, GAUCHE);
-                break;
-
-                case SDLK_RIGHT:
-                vilainActuel=vilain[DROITE];
-                deplacerJoueur(carte, &positionJoueurVilain, DROITE);
-                break;
-
-                default:
-                break;
-
             }
-            break;
+            if(etat_clavier.key[SDLK_LEFT]) {
+                sachaActuel=sacha[GAUCHE];
+                deplacerJoueur(carte, &positionJoueurVilain, GAUCHE);
+            }
+            if(etat_clavier.key[SDLK_DOWN]) {
+                sachaActuel=sacha[BAS];
+                deplacerJoueur(carte, &positionJoueurVilain, BAS);
+            }
+            if(etat_clavier.key[SDLK_RIGHT]) {
+                sachaActuel=sacha[DROITE];
+                deplacerJoueur(carte, &positionJoueurVilain, DROITE);
+            }
+        // SDL_WaitEvent(&event);
+        // switch(event.type)
+        // {
+        //     case SDL_QUIT:
+        //     continuer=0;
+        //     break;
 
-            default:
-            break;
+        //     case SDL_KEYDOWN:
+        //     switch(event.key.keysym.sym) {
+
+        //         case SDLK_ESCAPE:
+        //         continuer=0;
+        //         break;
+        //     // Déplacements sacha
+        //         case SDLK_z:
+        //         sachaActuel=sacha[HAUT];
+        //         deplacerJoueur(carte, &positionJoueur, HAUT);
+        //         break;
+
+        //         case SDLK_s:
+        //         sachaActuel=sacha[BAS];
+        //         deplacerJoueur(carte, &positionJoueur, BAS);
+        //         break;
+
+        //         case SDLK_q:
+        //         sachaActuel=sacha[GAUCHE];
+        //         deplacerJoueur(carte, &positionJoueur, GAUCHE);
+        //         break;
+
+        //         case SDLK_d:
+        //         sachaActuel=sacha[DROITE];
+        //         deplacerJoueur(carte, &positionJoueur, DROITE);
+        //         break;
+
+        //         case SDLK_x:
+        //         creationBombe(carte,ecran);
+        //         break;
+
+        //      // Déplacements Vilain
+        //         case SDLK_UP:
+        //         vilainActuel=vilain[HAUT];
+        //         deplacerJoueur(carte, &positionJoueurVilain, HAUT);
+        //         break;
+
+        //         case SDLK_DOWN:
+        //         vilainActuel=vilain[BAS];
+        //         deplacerJoueur(carte, &positionJoueurVilain, BAS);
+        //         break;
+
+        //         case SDLK_LEFT:
+        //         vilainActuel=vilain[GAUCHE];
+        //         deplacerJoueur(carte, &positionJoueurVilain, GAUCHE);
+        //         break;
+
+        //         case SDLK_RIGHT:
+        //         vilainActuel=vilain[DROITE];
+        //         deplacerJoueur(carte, &positionJoueurVilain, DROITE);
+        //         break;
+
+        //         default:
+        //         break;
+
         }
 
         // On passe l'écran en blanc
@@ -324,11 +400,38 @@ void jouer(SDL_Surface* ecran){
         positionVilain.y=positionJoueurVilain.y*TAILLE_BLOC;
         SDL_BlitSurface(vilainActuel, NULL,ecran, &positionVilain);
 
+        usleep(40000);
         // On rafraichit l'ecran
         SDL_Flip(ecran);
     }
 
-    SDL_EnableKeyRepeat(0,0);
+    if(continuer==4){
+        Mix_CloseAudio();
+        Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
+        Mix_Music *gagner;
+        gagner=Mix_LoadMUS("son/win.mp3");
+        Mix_PlayMusic(gagner,0);
+        positionWin.x=200;
+        SDL_BlitSurface(sachaWin,NULL,ecran,&positionWin);
+        SDL_Flip(ecran);
+        sleep(14);
+        continuer=0;
+
+    }
+     if(continuer==5){
+        Mix_CloseAudio();
+        Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS,1024);
+        Mix_Music *perdu;
+        perdu=Mix_LoadMUS("son/pokemon.mp3");
+        Mix_PlayMusic(perdu,0);
+        positionLoose.x=200;
+        SDL_BlitSurface(sachaLoose,NULL,ecran,&positionLoose);
+        SDL_Flip(ecran);
+        sleep(14);
+        continuer=0;
+
+    }
+
     SDL_FreeSurface(mur);
     SDL_FreeSurface(rocher);
 
@@ -344,6 +447,10 @@ void jouer(SDL_Surface* ecran){
         SDL_FreeSurface(bombeBas);
         SDL_FreeSurface(bombeGauche);
         SDL_FreeSurface(bombeDroite);
+
+        SDL_FreeSurface(sachaWin);
+        SDL_FreeSurface(sachaLoose);
+
 }
 
 // Fonction pour faire déplacer le joueur
@@ -474,6 +581,8 @@ void creationBombe(int **carte, SDL_Surface* ecran){
 
 void *gestion_bombe(void*arg){
 
+    int fin;
+
     listearg *args=(listearg*)arg;
     int **carte1 = args->carte1;
 
@@ -482,7 +591,7 @@ void *gestion_bombe(void*arg){
     for(a=2; a<11; a++){
     for(b=2; b<21; b++){
 
-        if(carte1[a][b]==BOMBE){
+        if(carte1[a][b]==BOMBE || carte1[a][b]==BOMBE2){
             // On empêche qu'il y ait plusieurs bombes sur la map
             pthread_exit(NULL);
         }
@@ -491,10 +600,15 @@ void *gestion_bombe(void*arg){
     // La bombe est créee au niveau du joueur dans la carte1 (thread)
     carte1[positionJoueur.y][positionJoueur.x]=BOMBE;
 
+    usleep(200000);
 
-
+    // On alloue plusieurs channels pour superposer les sons
+    Mix_AllocateChannels(32);
+            Mix_Chunk *bruitbombe;
+            // on charge le son au format WAV (marche pour les mp3)
+            bruitbombe=Mix_LoadWAV("son/explosion.wav");
+            Mix_PlayChannelTimed(2,bruitbombe,0,-1);
     
-
     for(a=2; a<11; a++){
     for(b=2; b<21; b++){
         if(carte1[a][b]==BOMBE){
@@ -508,16 +622,8 @@ void *gestion_bombe(void*arg){
             usleep(200000);
             
         }
-          Mix_AllocateChannels(32);
-            Mix_Chunk *bruitbombe;
-            // on charge le son au format WAV (marche pour les mp3)
-            bruitbombe=Mix_LoadWAV("son/bruitbombe.mp3");
-            Mix_PlayChannel(2,bruitbombe,0);
     }
     }
-     // On alloue plusieurs channels pour superposer les sons
-          
-
 
     for(a=2; a<11; a++){
     for(b=2; b<21; b++){
@@ -526,6 +632,14 @@ void *gestion_bombe(void*arg){
         if(carte1[a][b]==BOMBE){
 
             carte1[a][b]=BOMBECENTRE;
+
+            if(carte1[a+1][b] ==carte1[positionJoueur.y][positionJoueur.x]){
+                fin=2;
+            }
+            if(carte1[a+1][b]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
+                fin=1;
+            }
+
             // 1 case en dessous de l'explosion 
             if(carte1[a+1][b]!=MUR){
                 carte1[a+1][b]=BOMBEBAS;
@@ -533,10 +647,12 @@ void *gestion_bombe(void*arg){
 
             if(carte1[a+1][b] ==carte1[positionJoueur.y][positionJoueur.x]){
                 carte1[a+1][b]=BOMBEBAS;
+                fin=2;
             }
 
             if(carte1[a+1][b]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
                 carte1[a+1][b]=BOMBEBAS;
+                fin=1;
             }
 
             if(carte1[a+1][b]==ROCHER){
@@ -549,10 +665,12 @@ void *gestion_bombe(void*arg){
 
             if(carte1[a-1][b]==carte1[positionJoueur.y][positionJoueur.x]){
                 carte1[a-1][b]=BOMBEHAUT;
+                fin=2;
             }
 
             if(carte1[a-1][b]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
                 carte1[a-1][b]=BOMBEHAUT;
+                fin=1;
             }
 
             if(carte1[a-1][b]==ROCHER){
@@ -566,10 +684,12 @@ void *gestion_bombe(void*arg){
 
             if(carte1[a][b+1]==carte1[positionJoueur.y][positionJoueur.x]){
                 carte1[a][b+1]=BOMBEDROITE;
+                fin=2;
             }
 
             if(carte1[a][b+1]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
                 carte1[a][b+1]=BOMBEDROITE;
+                fin=1;
             }
 
             if(carte1[a][b+1]==ROCHER){
@@ -583,10 +703,12 @@ void *gestion_bombe(void*arg){
 
             if(carte1[a][b-1]==carte1[positionJoueur.y][positionJoueur.x]){
                 carte1[a][b-1]=BOMBEGAUCHE;
+                fin=2;
             }
 
             if(carte1[a][b-1]==carte1[positionJoueurVilain.y][positionJoueurVilain.x]){
                 carte1[a][b-1]=BOMBEGAUCHE;
+                fin=1;
             }
 
             if(carte1[a][b-1]==ROCHER){
@@ -598,9 +720,6 @@ void *gestion_bombe(void*arg){
 
     // On fait apparaitre l'explosion
     usleep(200000);
-
-   
-
 
 
     // On fait disparaitre l'explosion
@@ -622,6 +741,13 @@ void *gestion_bombe(void*arg){
             carte1[a][b]=VIDE;
         }
     }
+    }
+
+    if(fin==1){
+        continuer=4;
+    }
+    if(fin==2){
+        continuer=5;
     }
 
     // On sort du thread
